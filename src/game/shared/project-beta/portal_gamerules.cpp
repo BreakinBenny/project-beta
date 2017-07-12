@@ -1205,7 +1205,7 @@ bool CPortalGameRules::ShouldRemoveRadio()
 }
 #endif
 
-static ConVar pb_force_old_mode("pb_force_old_mode", "0", FCVAR_REPLICATED, "Always set the Early mode to true.");
+//static ConVar pb_force_old_mode("pb_force_old_mode", "0", FCVAR_REPLICATED, "Always set the Early mode to true.");
 
 void ChangeTonemap(int b)
 {
@@ -1231,13 +1231,15 @@ bool CPortalGameRules::TwentyOFive()
 
 bool CPortalGameRules::EarlyInYear()
 {
-	ConVar *pb_force_old_mode = cvar->FindVar("pb_force_old_mode");
-	unsigned int notearly = pb_force_old_mode->GetInt();
+	ConVar *mat_tonemap_algorithm = cvar->FindVar("mat_tonemap_algorithm");
+	mat_tonemap_algorithm->SetValue(1);
+	bool early = false;
 
 	// Check prefixes. x06 and lab both trigger 
 	if (!Q_strnicmp(gpGlobals->mapname.ToCStr(), "x06_", 4) || !Q_strnicmp(gpGlobals->mapname.ToCStr(), "lab_", 4))
 	{
-		notearly = 0;
+		mat_tonemap_algorithm->SetValue(0);
+		early = true;
 	}
 	else
 	{
@@ -1250,13 +1252,12 @@ bool CPortalGameRules::EarlyInYear()
 			V_strcmp(STRING(gpGlobals->mapname), "testchmb_a_08_leipzig0") == 0 ||
 			V_strcmp(STRING(gpGlobals->mapname), "testchmb_a_08_leipzig2") == 0 )
 		{
-			notearly = 0;
+			mat_tonemap_algorithm->SetValue(0);
+			early = true;
 		}
 	}
 
-	ChangeTonemap(notearly);
-
-	if (notearly >= 1) return false; else return true;
+	return early;
 
 	/*
 #ifndef GAMEHACKER_BUILD
