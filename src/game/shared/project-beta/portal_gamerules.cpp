@@ -1232,12 +1232,12 @@ bool CPortalGameRules::TwentyOFive()
 bool CPortalGameRules::EarlyInYear()
 {
 	ConVar *pb_force_old_mode = cvar->FindVar("pb_force_old_mode");
-	unsigned int early = pb_force_old_mode->GetInt();
+	unsigned int notearly = pb_force_old_mode->GetInt();
 
 	// Check prefixes. x06 and lab both trigger 
 	if (!Q_strnicmp(gpGlobals->mapname.ToCStr(), "x06_", 4) || !Q_strnicmp(gpGlobals->mapname.ToCStr(), "lab_", 4))
 	{
-		early = 1;
+		notearly = 0;
 	}
 	else
 	{
@@ -1250,13 +1250,13 @@ bool CPortalGameRules::EarlyInYear()
 			V_strcmp(STRING(gpGlobals->mapname), "testchmb_a_08_leipzig0") == 0 ||
 			V_strcmp(STRING(gpGlobals->mapname), "testchmb_a_08_leipzig2") == 0 )
 		{
-			early = 1;
+			notearly = 0;
 		}
 	}
 
-	ChangeTonemap(early);
+	ChangeTonemap(notearly);
 
-	if (early >= 1) return true; else return false;
+	if (notearly >= 1) return false; else return true;
 
 	/*
 #ifndef GAMEHACKER_BUILD
