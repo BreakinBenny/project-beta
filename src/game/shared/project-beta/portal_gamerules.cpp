@@ -1205,9 +1205,60 @@ bool CPortalGameRules::ShouldRemoveRadio()
 }
 #endif
 
+static ConVar pb_force_old_mode("pb_force_old_mode", "0", FCVAR_REPLICATED, "Always set the Early mode to true.");
+
+void ChangeTonemap(int b)
+{
+	ConVar *mat_tonemap_algorithm = cvar->FindVar("mat_tonemap_algorithm");
+	int mattonemap = mat_tonemap_algorithm->GetInt();
+
+	if (mattonemap != b)
+	{
+		DevMsg("Changing tonemapping...\n");
+		mat_tonemap_algorithm->SetValue(mattonemap);
+	}
+}
+
+bool CPortalGameRules::TwentyOFive()
+{
+	if (!Q_strnicmp(gpGlobals->mapname.ToCStr(), "lab_", 4))
+	{
+		return true;
+	}
+
+	return false;
+}
 
 bool CPortalGameRules::EarlyInYear()
 {
+	ConVar *pb_force_old_mode = cvar->FindVar("pb_force_old_mode");
+	unsigned int early = pb_force_old_mode->GetInt();
+
+	// Check prefixes. x06 and lab both trigger 
+	if (!Q_strnicmp(gpGlobals->mapname.ToCStr(), "x06_", 4) || !Q_strnicmp(gpGlobals->mapname.ToCStr(), "lab_", 4))
+	{
+		early = 1;
+	}
+	else
+	{
+		// All early maps.
+		if (V_strcmp(STRING(gpGlobals->mapname), "art_testroom") == 0 || 
+			V_strcmp(STRING(gpGlobals->mapname), "portaldemo_barcelona") == 0 ||
+			V_strcmp(STRING(gpGlobals->mapname), "portalvideo_00") == 0 ||
+			V_strcmp(STRING(gpGlobals->mapname), "portalvideo_01") == 0 ||
+			V_strcmp(STRING(gpGlobals->mapname), "testchmb_a_08_leipzig") == 0 ||
+			V_strcmp(STRING(gpGlobals->mapname), "testchmb_a_08_leipzig0") == 0 ||
+			V_strcmp(STRING(gpGlobals->mapname), "testchmb_a_08_leipzig2") == 0 )
+		{
+			early = 1;
+		}
+	}
+
+	ChangeTonemap(early);
+
+	if (early >= 1) return true; else return false;
+
+	/*
 #ifndef GAMEHACKER_BUILD
 	DevMsg("===============Checking Era!!==============\n");
 	ConVar *mat_tonemap_algorithm = cvar->FindVar("mat_tonemap_algorithm");
@@ -1235,21 +1286,6 @@ bool CPortalGameRules::EarlyInYear()
 	mat_tonemap_algorithm->SetValue(1);
 	return true;
 #endif
-
-	/*
-	if ( !Q_strnicmp( gpGlobals->mapname.ToCStr(), "x06_", 4 ) )
-	{
-		m_bEarly = true;
-		return true;
-	}
-	else if (V_strcmp(STRING(gpGlobals->mapname), "art_testroom") == 0)
-	{
-		m_bEarly = true;
-		return true;
-	}
-
-	m_bEarly = false;
-	return m_bEarly;
 	*/
 }
 
