@@ -1205,101 +1205,54 @@ bool CPortalGameRules::ShouldRemoveRadio()
 }
 #endif
 
-//static ConVar pb_force_old_mode("pb_force_old_mode", "0", FCVAR_REPLICATED, "Always set the Early mode to true.");
-
-void ChangeTonemap(int b)
+// This is Project-Beta's era system code. Pretty much how the game knows what map you're playing.
+static ConVar pb_force_old_mode("pb_force_early_mode", "0", FCVAR_REPLICATED || FCVAR_ARCHIVE, "Always set the Early mode to true.");
+bool CPortalGameRules::EarlyInYear()
 {
-	ConVar *mat_tonemap_algorithm = cvar->FindVar("mat_tonemap_algorithm");
-	int mattonemap = mat_tonemap_algorithm->GetInt();
-
-	if (mattonemap != b)
+	// If this is set to true, then assume it's early.
+	if (pb_force_old_mode.GetBool() == true)
 	{
-		DevMsg("Changing tonemapping...\n");
-		mat_tonemap_algorithm->SetValue(mattonemap);
-	}
-}
-
-bool CPortalGameRules::TwentyOFive()
-{
-	if (!Q_strnicmp(gpGlobals->mapname.ToCStr(), "lab_", 4))
-	{
+		pb_force_old_mode.SetValue(0);
 		return true;
 	}
 
-	return false;
-}
-
-bool CPortalGameRules::EarlyInYear()
-{
 	ConVar *mat_tonemap_algorithm = cvar->FindVar("mat_tonemap_algorithm");
-	mat_tonemap_algorithm->SetValue(0);
-	bool early = true;
+	bool early = false; // <- Are we playing a map eariler than December 2006...
 
-	// 7/13/17: Make it so the campaign is the only map that turns this mode off.
-	// We want magenta and cyan sprites and no particles for most of the mod/packs! ~reep
-	if (!Q_strnicmp(gpGlobals->mapname.ToCStr(), "testchmb_", 9))
+	// Custom maps...
+	if (!Q_strnicmp(gpGlobals->mapname.ToCStr(), "x06_", 4) // x06
+		|| !Q_strnicmp(gpGlobals->mapname.ToCStr(), "trailer_", 8) // trailer
+		|| !Q_strnicmp(gpGlobals->mapname.ToCStr(), "lab_", 4)) // 2005
 	{
-		mat_tonemap_algorithm->SetValue(1);
-		early = false;
-	}
-
-	/*
-	// Check prefixes. x06 and lab both trigger 
-	if (!Q_strnicmp(gpGlobals->mapname.ToCStr(), "x06_", 4) || !Q_strnicmp(gpGlobals->mapname.ToCStr(), "lab_", 4))
-	{
-		mat_tonemap_algorithm->SetValue(0);
 		early = true;
 	}
 	else
 	{
 		// All early maps.
-		if (V_strcmp(STRING(gpGlobals->mapname), "art_testroom") == 0 || 
-			V_strcmp(STRING(gpGlobals->mapname), "portaldemo_barcelona") == 0 ||
-			V_strcmp(STRING(gpGlobals->mapname), "portalvideo_00") == 0 ||
-			V_strcmp(STRING(gpGlobals->mapname), "portalvideo_01") == 0 ||
-			V_strcmp(STRING(gpGlobals->mapname), "testchmb_a_08_leipzig") == 0 ||
-			V_strcmp(STRING(gpGlobals->mapname), "testchmb_a_08_leipzig0") == 0 ||
-			V_strcmp(STRING(gpGlobals->mapname), "testchmb_a_08_leipzig2") == 0 )
+		if (V_strcmp(STRING(gpGlobals->mapname), "art_testroom") == 0 || // Art test room
+			V_strcmp(STRING(gpGlobals->mapname), "portaldemo_barcelona") == 0 || // OG x06 demo. (Our fixed one uses x06_ prefix.)
+			V_strcmp(STRING(gpGlobals->mapname), "portalvideo_00") == 0 || // Trailer room 1
+			V_strcmp(STRING(gpGlobals->mapname), "portalvideo_01") == 0 || // Trailer room 1
+			V_strcmp(STRING(gpGlobals->mapname), "testchmb_a_08_leipzig") == 0 || // GDC 06 demo..
+			V_strcmp(STRING(gpGlobals->mapname), "testchmb_a_08_leipzig0") == 0 || // Some map I made for Kayla long time ago..
+			V_strcmp(STRING(gpGlobals->mapname), "testchmb_a_08_leipzig2") == 0 ) // A fixed GDC 06 demo???
 		{
-			mat_tonemap_algorithm->SetValue(0);
 			early = true;
 		}
 	}
-	*/
+
+	// Set the tonemap control if needed...
+	if (early)
+	{
+		mat_tonemap_algorithm->SetValue(0);
+	}
+	else
+	{
+		mat_tonemap_algorithm->SetValue(1);
+	}
 
 	return early;
-
-	/*
-#ifndef GAMEHACKER_BUILD
-	DevMsg("===============Checking Era!!==============\n");
-	ConVar *mat_tonemap_algorithm = cvar->FindVar("mat_tonemap_algorithm");
-
-	// If we're in the art_testroom, return true.
-	if (V_strcmp(STRING(gpGlobals->mapname), "art_testroom") == 0 || V_strcmp(STRING(gpGlobals->mapname), "portaldemo_barcelona") == 0)
-	{
-		//DevMsg("===============BETA!!==============\n");
-		mat_tonemap_algorithm->SetValue(0);
-		return true;
-	}
-
-	if (!Q_strnicmp(gpGlobals->mapname.ToCStr(), "x06_", 4))
-	{
-		//DevMsg("===============BETA!!==============\n");
-		mat_tonemap_algorithm->SetValue(0);
-		return true;
-	}
-
-	mat_tonemap_algorithm->SetValue(1);
-	return false;
-#else
-	// Gamehacker always wants X06 mode...
-	ConVar *mat_tonemap_algorithm = cvar->FindVar("mat_tonemap_algorithm");
-	mat_tonemap_algorithm->SetValue(1);
-	return true;
-#endif
-	*/
 }
-
 
 #endif//CLIENT_DLL
 

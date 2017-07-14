@@ -112,6 +112,14 @@ public:
 
 	PortalWeaponID GetWeaponID( void ) const { return WEAPON_PORTALGUN; }
 
+	// Project-Beta
+	bool IsCannon()
+	{
+		if (FClassnameIs(this, "weapon_portalcannon"))
+			return true;
+		return false;
+	}
+
 protected:
 
 	void	StartEffects( void );	// Initialize all sprites and beams

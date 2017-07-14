@@ -78,6 +78,9 @@ END_DATADESC()
 LINK_ENTITY_TO_CLASS( weapon_portalgun, CWeaponPortalgun );
 PRECACHE_WEAPON_REGISTER(weapon_portalgun);
 
+LINK_ENTITY_TO_CLASS(weapon_portalcannon, CWeaponPortalgun);
+PRECACHE_WEAPON_REGISTER(weapon_portalcannon);
+
 extern ConVar sv_portal_placement_debug;
 extern ConVar sv_portal_placement_never_fail;
 

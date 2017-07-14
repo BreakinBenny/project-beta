@@ -90,7 +90,6 @@ private:
 #endif
 
 	virtual bool			EarlyInYear();
-	virtual bool			TwentyOFive();
 	
 public:
 
