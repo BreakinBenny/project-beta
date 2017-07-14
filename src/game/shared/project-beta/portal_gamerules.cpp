@@ -1232,9 +1232,18 @@ bool CPortalGameRules::TwentyOFive()
 bool CPortalGameRules::EarlyInYear()
 {
 	ConVar *mat_tonemap_algorithm = cvar->FindVar("mat_tonemap_algorithm");
-	mat_tonemap_algorithm->SetValue(1);
-	bool early = false;
+	mat_tonemap_algorithm->SetValue(0);
+	bool early = true;
 
+	// 7/13/17: Make it so the campaign is the only map that turns this mode off.
+	// We want magenta and cyan sprites and no particles for most of the mod/packs! ~reep
+	if (!Q_strnicmp(gpGlobals->mapname.ToCStr(), "testchmb_", 9))
+	{
+		mat_tonemap_algorithm->SetValue(1);
+		early = false;
+	}
+
+	/*
 	// Check prefixes. x06 and lab both trigger 
 	if (!Q_strnicmp(gpGlobals->mapname.ToCStr(), "x06_", 4) || !Q_strnicmp(gpGlobals->mapname.ToCStr(), "lab_", 4))
 	{
@@ -1256,6 +1265,7 @@ bool CPortalGameRules::EarlyInYear()
 			early = true;
 		}
 	}
+	*/
 
 	return early;
 
