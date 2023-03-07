@@ -1,12 +1,11 @@
 //-----------------------------------------------------------------------------
-//	SERVER_PORTAL.VPC
-//
-//	Project Script
+//SERVER_PORTAL.VPC
+//Project Script
 //-----------------------------------------------------------------------------
 
-$Macro SRCDIR		"..\.."
-$Macro GAMENAME 	"project-beta" [!$SOURCESDK]
-$Macro GAMENAME 	"project-beta" [$SOURCESDK]
+$Macro SRCDIR	"..\.."
+$Macro GAMENAME "project-beta" [!$SOURCESDK]
+$Macro GAMENAME "project-beta" [$SOURCESDK]
 
 $Include "$SRCDIR\game\server\server_base.vpc"
 
@@ -15,7 +14,7 @@ $Configuration
 	$Compiler
 	{
 		$AdditionalIncludeDirectories	"$BASE;$SRCDIR\game\shared\project-beta;.\hl2;.\episodic;$SRCDIR\game\shared\multiplayer;$SRCDIR\game\shared\hl2;$SRCDIR\game\shared\project-beta;.\project-beta"
-		$PreprocessorDefinitions		"$BASE;PORTAL;HL2_DLL;HL2_EPISODIC;USES_SAVERESTORE;PORTAL_BETAEFX;SOURCESDK_2013"
+		$PreprocessorDefinitions	"$BASE;PORTAL;HL2_DLL;HL2_EPISODIC;USES_SAVERESTORE;PORTAL_BETAEFX;SOURCESDK_2013"
 	}
 }
 
@@ -268,7 +267,6 @@ $Project "Server (Portal)"
 				$File	"hl2\weapon_flaregun.h"
 				$File	"episodic\weapon_hopwire.cpp"
 			}
-
 		}
 
 		$Folder	"Portal"
